@@ -1,26 +1,30 @@
 from __future__ import annotations
 
-import shutil
-from datetime import datetime
 from pathlib import Path
+import pandas as pd
 
 
-def backup_folder(source_dir: str, backup_root: str) -> None:
-    src = Path(source_dir)
-    if not src.exists():
-        raise FileNotFoundError(f"Source folder not found: {source_dir}")
+def clean_excel(input_file: str, output_file: str) -> None:
+    input_path = Path(input_file)
 
-    root = Path(backup_root)
-    root.mkdir(parents=True, exist_ok=True)
+    if not input_path.exists():
+        raise FileNotFoundError(f"File not found: {input_file}")
 
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    dest = root / f"{src.name}_backup_{timestamp}"
+    df = pd.read_excel(input_path)
 
-    shutil.copytree(src, dest)
-    print(f"Backup created: {dest}")
+    # Remove empty rows
+    df = df.dropna(how="all")
+
+    # Strip spaces from string columns
+    df = df.apply(lambda col: col.str.strip() if col.dtype == "object" else col)
+
+    output_path = Path(output_file)
+    df.to_excel(output_path, index=False)
+
+    print(f"Cleaned Excel saved to: {output_path}")
 
 
 if __name__ == "__main__":
-    src = input("Source folder path: ").strip()
-    dest_root = input("Backup root folder path: ").strip()
-    backup_folder(src, dest_root)
+    inp = input("Enter Excel file path: ").strip()
+    out = input("Enter output file name: ").strip()
+    clean_excel(inp, out)

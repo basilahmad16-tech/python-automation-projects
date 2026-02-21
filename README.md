@@ -32,5 +32,8 @@ This repository contains practical Python automation scripts for real-world task
 - Standard Library (pathlib, shutil, csv)
 - Automation-focused scripting
 
-## 🎯 هدف (Goal)
+## How to Run
+pip install -r requirements.txt
+python script_name.py
+
 To build efficient automation tools that save time and improve productivity.
